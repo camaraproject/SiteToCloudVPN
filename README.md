@@ -19,8 +19,8 @@ Repository to describe, develop, document and test the Site To Cloud VPN API fam
 
 ## Meetings
 * Meetings are held virtually
-* Schedule: tbd
-* Meeting link: tbd
+* Schedule: Schedule: Biweekly on Friday, 17:50-18:30(GMT+08:00) CST / 10:50-11:30 CET
+* Meeting link: https://teams.live.com/meet/9559310154416?p=X9GldgzTnpV6NUdx / Meeting ID: 955 931 015 441 6 & PWD:V2RXNd
 
 ## Contributorship and mailing list
 * To subscribe / unsubscribe to the mailing list of this Sub Project and thus be / resign as Contributor please visit <https://lists.camaraproject.org/g/sp-s2c>.
