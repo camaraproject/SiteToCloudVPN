@@ -1,0 +1,65 @@
+# ***\*Overview\****
+
+The Site to cloud (S2C) VPN API provides programmable interface for developers and other users (capabilities consumers) to request private cloud connectivity service managed by Telco networks without the necessity to have an in-depth knowledge of underlying differences and complexity of the Telco networks infrastructure.
+
+## ***\*1. Introduction\****
+
+Traditionally, when customers demand private cloud connectivity service, they need to order the service by phone call, or through customer manager manually. It’s not flexible to create/modify/delete service according to the practical requirements at any time by this method. Currently many scenarios such as industries, finance, education, medical, Internet of things, cloud desktop, cloud conference, cloud recording demand flexible private cloud connection to their public or private cloud resource for stable, private and reliable application flow transmission.
+
+The S2C VPN API offers the application developers the capability to request for private cloud connection for their  applications between Application Clients (customer enterprise site) and Application Servers (cloud services). This API allows developers to create and configure site to cloud network service with network SLA requirements by one click. 
+
+## ***\*2. Quick Start\****
+
+### ***\*2.1 Abbreviations and acronyms\****
+
+AS       Application Server
+
+CE       Customer Edge 
+
+PE      Provider Edge
+
+S2C      Site to cloud
+
+SLA      Service Level Agreement 
+
+VPN      Virtual Private Network
+
+***\*2.2 Pre-condition\****
+
+The usage of the API is based on S2C VPN session resources, which can be created, queried and deleted. The deletion of a requested session can be triggered by the API consumer or can be triggered automatically. The automatic process is triggered either when the requested specified duration of a S2C VPN session has reached its limit or the default session expiration time has been reached (within an example provider implementation it is set to 6 months).
+
+Before starting to use the API, the developer needs to know about the below specified details:
+
+**S2C VPN** **service endpoint** The URL pointing to the RESTful resource of the S2C VPN API.
+
+**Authentication** Security access keys such as OAuth 2.0 client credentials used by client applications to invoke the S2C VPN API.
+
+**Identifier for** **access point** **Customer Edge** **(****C****E)** IPv4 addressand/or IPv6 address of the Customer Edge Router.
+
+**Identifier for the** **e*****\*ndpoint\**** **cloud** ***\*Provider Edge\**** **(****PE****)** IPv4 and/or IPv6 address of the Cloud Provider Edge
+
+**Identifier for t****he** **application server****(AS)**IPv4 and/or IPv6 address of the application server (cloud virtual machine)
+
+**App-Flow (between the application client and application server)** The developer wants to have non public network delivery for the precise application data flow for the application users. 
+
+**Duration** Duration (in hours) for which the S2C VPN session (between CE and cloud PE) should be created. This parameter is optional. When not specified, a default session duration (e.g. 6 months) is applied. The user may request a termination before its expiration.
+
+***\*Physical Location\**** Physical location of the Customer Edge Router.
+
+NOTE- The private physical link between CE and cloud PE is default deployed for one click calling, otherwise it is required to install the physical link, which is out of the scope of this API.
+
+Sample API invocations are presented in Section 4.6.
+
+## ***\*3. Authentication and Authorization\****
+
+The S2C VPN API makes use of the OAUTH 2.0 client credentials grant which is applicable for server to server use cases involving trusted partners or clients without any protected user data involved. In this method the API invoker client is registered as a confidential client with an authorization grant type of client_credentials [[1\]](#3).
+
+## ***\*4. API Documentation\****
+
+### ***\*4.1 API Version\****
+
+0.1.0
+
+### ***\*4.2 Details\****
+
+Editor's note: This clause will be updated the parameters details of the API for creation/update/query/deletion.
