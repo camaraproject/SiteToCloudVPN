@@ -1,0 +1,317 @@
+openapi: "3.0.2"
+info:
+  title: S2C VPN API 
+  description: |
+    ##### Before starting to use the API, the developer needs to know about the below specified details :
+    * S2C VPN service endpoint The URL pointing to the RESTful resource of the S2C VPN API. 
+    * Authentication Security access keys such as OAuth 2.0 client credentials used by client applications to invoke the S2C VPN API.
+    * Identifier for access point Customer Edge (CE) IPv4 addressand/or IPv6 address of the Customer Edge Router.
+    * Identifier for the endpoint cloud Provider Edge (PE) IPv4 and/or IPv6 address of the Cloud Provider Edge
+    * Identifier for the application server(AS)IPv4 and/or IPv6 address of the application server (cloud virtual machine)
+    * App-Flow (between the application client and application server) The developer wants to have non public network delivery for the precise application data flow for the application users.     
+    * Duration Duration (in hours) for which the S2C VPN session (between CE and cloud PE) should be created. This parameter is optional. When not specified, a default session duration (e.g. 6 months) is applied. The user may request a termination before its expiration.
+    * Physical Location Physical location of the Customer Edge Router.
+
+
+    NOTE- The private physical link between CE and cloud PE is default deployed for one click calling, otherwise it is required to install the physical link, which is out of the scope of this API.
+       
+  version: '0.1'
+servers:
+- url: https://localhost:8080/webapi
+  description: develop server
+paths: 
+    /S2C_VPN :
+     post:
+       tags: 
+       parameters:
+        - $ref: '#/components/parameters/servceName'
+        - $ref: '#/components/parameters/CEType'
+        - $ref: '#/components/parameters/CEIP'
+        - $ref: '#/components/parameters/PEType'
+        - $ref: '#/components/parameters/PEIP'
+        - $ref: '#/components/parameters/sla'
+        - $ref: '#/components/parameters/minimumSpeedRate'
+        - $ref: '#/components/parameters/duration'
+        - $ref: '#/components/parameters/CELocation'
+        - $ref: '#/components/parameters/routeProtocal'
+
+       responses:
+        200:
+         description: Successful response
+         content:
+          application/json:
+           schema:
+            type: object
+            properties:
+             serviceId:
+              type: string
+              description: service Id
+             resourceGroupId:
+              type: string
+              description: resource group Id
+             cloudGatewayIP:
+              type: string
+              description: cloud gateway IPAddress
+        400:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/400'
+        401:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/401'    
+        403:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/403'   
+        500:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/500'   
+        503:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/500'   
+
+     put: 
+      tags: 
+      parameters:
+        - $ref: '#/components/parameters/servceId'
+        - $ref: '#/components/parameters/sla'
+        - $ref: '#/components/parameters/minimumSpeedRate'
+      responses:
+        200:
+         description: Successful response
+         content:
+          application/json:
+           schema:
+            title: Successful
+            type: object
+            properties:
+             serviceId:
+              type: string
+             minimumSpeedRate:
+              type: string
+             slaLevel:
+              type: string
+        400:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/400'
+        401:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/401'    
+        403:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/403'   
+        404:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/404'   
+        500:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/500'   
+        503:
+         description: error/exception codes for the S2C VPN AP
+         content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/500'   
+components:
+  parameters:
+    servceId:
+      name: servceId
+      required: true 
+      in: query
+      description: "service session ID"
+      schema:
+        type: string    
+    servceName:
+      name: servceName
+      required: true 
+      in: query
+      description: "servce name"
+      schema:
+        type: string
+    CEType:
+      name: CEType
+      required: true 
+      in: query
+      description: S2C VPN access point type
+      schema:
+        type: string
+        enum: 
+         - site
+         - cloud
+    CEIP:
+      name: CEIP
+      required: true 
+      in: query
+      description: Access point CE address
+      schema:
+        type: string
+    PEType:
+      name: PEType
+      required: true 
+      in: query
+      description: S2C VPN endpoint type ( Cloud PE/gateway type)
+      schema:
+        type: string
+        enum: 
+         - site
+         - cloud
+    PEIP:
+      name: PEIP
+      required: true 
+      in: query
+      description: Endpoint Cloud PE address
+      schema:
+        type: string
+    sla:
+      name: slaLevel
+      required: true 
+      in: query
+      description: "available SLA (Service-Level Agreement)"
+      schema:
+        type: string
+        enum: 
+         - A
+         - AA
+         - AAA
+    minimumSpeedRate:
+      name: minimumSpeedRate
+      required: true 
+      in: query
+      description: Guarantee Bandwidth (Mps)
+      schema:
+        type: integer
+        minimum: 1
+    duration:
+      name: duration
+      required: true 
+      in: query
+      description: "Guarantee duration, unit:Hour"
+      schema:
+        type: integer
+    CELocation:
+      name: CELocation
+      required: true 
+      in: query
+      description: Access point CE physical location
+      schema:
+        type: string
+    routeProtocal:
+      name: routeProtocal
+      required: true 
+      in: query
+      description: routeProtocal
+      schema:
+        type: string
+        enum: 
+         - static
+         - BGP
+  
+
+  schemas:
+  -400:
+     status: 400
+     type: object
+     properties:
+      code:
+        type: string
+        enmu: 
+          - "INVALID_INPUT"
+      message:
+        type: string
+        enmu: 
+          - "Expected property is missing: Site or cloud's ipv4addr"
+          - "Expected property is missing: Site or cloud's ipv6addr"
+          - "Expected property is missing: Site or cloud 's ipv4addr/ipv6addr"
+          - "Expected property is missing: minimumSpeedRate"
+          - "Expected property is missing: duration"
+          - "Expected property is missing: assessSiteAddressd"
+        description: reason
+  -401:
+     status: 401
+     type: object
+     properties:
+      code:
+        type: string
+        enmu: 
+          - "UNAUTHORIZED"
+      message:
+        type: string
+        enmu: 
+          - "No authorization to invoke operation"
+  -403:
+     status: 403
+     type: object
+     properties:
+      code:
+        type: string
+        enmu: 
+          - "FORBIDDEN"
+      message:
+        type: string
+        enmu: 
+          - "Operation not allowed"
+  -404:
+     status: 404
+     type: object
+     properties:
+      code:
+        type: string
+        enmu: 
+          - "NOT_FOUND"
+      message:
+        type: string
+        enmu: 
+          - "ServiceId does not exist"
+  -500:
+     status: 500
+     type: object
+     properties:
+      code:
+        type: string
+        enmu: 
+          - "INTERNAL"
+      message:
+        type: string
+        enmu: 
+          - "Service could not be created"
+  -503:
+     status: 503
+     type: object
+     properties:
+      code:
+        type: string
+        enmu: 
+          - "SERVICE_UNAVAILABLE"
+      message:
+        type: string
+        enmu: 
+          - "Service unavailable"
+
