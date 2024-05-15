@@ -5,4 +5,3 @@
 | China Telecom | Xianyang Zhang | zxyxwz |
 | China Unicom | Yang Fan | chinaunicomyangfan |
 | Huawei | Shuting Qing | ShutingQing |
-| Whale Cloud Technology Co.,Ltd | Xinhui Zhu| juvico|
