@@ -30,28 +30,41 @@ paths:
            schema:
             type: object
             properties:
+             isProtected:
+               type: bool
+               description: Is S2C VPN protected
              CEType:
               type: string
               description: S2C VPN access point type
               enum: 
                  - site
                  - cloud
-             CEIP:
-              description: Access point CE address
+             primaryCEIP:
+              description: primary Access point CE address
               type: string
               format: ipv4
               example: "84.125.93.10"
+             secondaryCEIP:
+              description: secondary Access point CE address
+              type: string
+              format: ipv4
+              example: "84.125.94.10"
              PEType:
               type: string
               description: S2C VPN endpoint type ( Cloud PE/gateway type)
               enum: 
                  - site
                  - cloud
-             PEIP::
-              description: Endpoint Cloud PE address
+             primaryPEIP:
+              description: primary Endpoint Cloud PE address
               type: string
               format: ipv4
               example: "84.125.93.10"
+             secondaryPEIP:
+              description:  secondary Endpoint Cloud PE address
+              type: string
+              format: ipv4
+              example: "84.125.94.10"
              guaranteeBandwidth:
               type: integer
               description: Guarantee Bandwidth (Mps)
@@ -301,16 +314,29 @@ paths:
              serviceId:
               type: string
               description: service Id
-             CEIP:
-              description: Access point CE address
-              type: string
-              format: ipv4
-              example: "84.125.93.10"
-             PEIP::
-              description: Endpoint Cloud PE address
-              type: string
-              format: ipv4
-              example: "84.125.93.10"
+             isProtected:
+               type: bool
+               description: Is S2C VPN protected
+             primaryCEIP:
+               description: primary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryCEIP:
+               description: secondary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
+             primaryPEIP:
+               description: primary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryPEIP:
+               description: secondary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
              purchasedSLA:
               type: string
               enum: 
@@ -403,16 +429,29 @@ paths:
              serviceId:
               type: string
               description: service Id
-             CEIP:
-              description: Access point CE address
-              type: string
-              format: ipv4
-              example: "84.125.93.10"
-             PEIP::
-              description: Endpoint Cloud PE address
-              type: string
-              format: ipv4
-              example: "84.125.93.10"
+             isProtected:
+               type: bool
+               description: Is S2C VPN protected
+             primaryCEIP:
+               description: primary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryCEIP:
+               description: secondary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
+             primaryPEIP:
+               description: primary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryPEIP:
+               description: secondary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
              actualSLA:
               type: string
               enum: 
@@ -494,6 +533,13 @@ components:
       description: "servce name"
       schema:
         type: string
+    isProtected:
+      name: isProtected
+      required: true
+      in: query
+      description: Is S2C VPN protected
+      schema:
+        type: bool
     CEType:
       name: CEType
       required: true 
@@ -504,13 +550,20 @@ components:
         enum: 
          - site
          - cloud
-    CEIP:
-      name: CEIP
+    primaryCEIP:
+      name: primaryCEIP
       required: true 
       in: query
-      description: Access point CE address
+      description: primary Access point CE address
       schema:
-        $ref: '#/components/schemas/SingleIpv4Addr' 
+        $ref: '#/components/schemas/SingleIpv4Addr'
+    secondaryCEIP:
+      name: secondaryCEIP
+      required: false
+      in: query
+      description: secondary Access point CE address. When isProtected is true, secondaryCEIP is required
+      schema:
+        $ref: '#/components/schemas/SingleIpv4Addr'
     PEType:
       name: PEType
       required: true 
@@ -521,11 +574,18 @@ components:
         enum: 
          - site
          - cloud
-    PEIP:
-      name: PEIP
+    primaryPEIP:
+      name: primaryPEIP
       required: true 
       in: query
-      description: Endpoint Cloud PE address
+      description: primary Endpoint Cloud PE address
+      schema:
+        $ref: '#/components/schemas/SingleIpv4Addr'
+    secondaryPEIP:
+      name: secondaryPEIP
+      required: false
+      in: query
+      description: secondary Endpoint Cloud PE address. When isProtected is true, secondaryPEIP is required
       schema:
         $ref: '#/components/schemas/SingleIpv4Addr'
     sla:
@@ -688,29 +748,42 @@ components:
      servceName:
       type: string
       description: "servce name"
+     isProtected:
+       type: bool
+       description: Is S2C VPN protected
      CEType:
       type: string
       description: S2C VPN access point type
       enum: 
          - site
          - cloud
-     CEIP:
-      description: Access point CE address
+     primaryCEIP:
+      description: primary Access point CE address
       type: string
       format: ipv4
       example: "84.125.93.10"
+     secondaryCEIP:
+       description: secondary Access point CE address
+       type: string
+       format: ipv4
+       example: "84.125.94.10"
      PEType:
       type: string
       description: S2C VPN endpoint type ( Cloud PE/gateway type)
       enum: 
          - site
          - cloud
-     PEIP::
-      description: Endpoint Cloud PE address
-      type: string
-      format: ipv4
-      example: "84.125.93.10"
-     SLA::
+     primaryPEIP:
+       description: primary Endpoint Cloud PE address
+       type: string
+       format: ipv4
+       example: "84.125.93.10"
+     secondaryPEIP:
+       description: secondary Endpoint Cloud PE address
+       type: string
+       format: ipv4
+       example: "84.125.94.10"
+     SLA:
       type: string
       enum: 
          - A
