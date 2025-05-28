@@ -1,0 +1,936 @@
+openapi: "3.0.3"
+info:
+  title: Site to Cloud VPN API 
+  description: |
+    ##### Before starting to use the API, the developer needs to know about the below specified details :
+    * Site to Cloud VPN service endpoint The URL pointing to the RESTful resource of the Site to Cloud VPN API. 
+    * Authentication Security access keys such as OAuth 2.0 client credentials used by client applications to invoke the Site to Cloud VPN API.
+    * Identifier for access point Customer Edge (CE) IPv4 addressand/or IPv6 address of the Customer Edge Router.
+    * Identifier for the endpoint cloud Provider Edge (PE) IPv4 and/or IPv6 address of the Cloud Provider Edge
+    * Identifier for the application server(AS)IPv4 and/or IPv6 address of the application server (cloud virtual machine)
+    * App-Flow (between the application client and application server) The developer wants to have non public network delivery for the precise application data flow for the application users.     
+    * Duration Duration (in hours) for which the Site to Cloud VPN session (between CE and cloud PE) should be created. This parameter is optional. When not specified, a default session duration (e.g. 6 months) is applied. The user may request a termination before its expiration.
+    * Physical Location Physical location of the Customer Edge Router.
+
+
+    NOTE- The private physical link between CE and cloud PE is default deployed for one click calling, otherwise it is required to install the physical link, which is out of the scope of this API.
+
+  version: '0.1'
+servers:
+- url: https://localhost:8080/webapi
+  description: develop server
+paths: 
+    /S2C_VPN_Assessment:
+     post:
+       parameters:
+        - $ref: '#/components/parameters/X-Correlator'
+       requestBody:
+        content:
+          application/json:
+           schema:
+            type: object
+            properties:
+             isProtected:
+               type: bool
+               description: Is Site to Cloud VPN protected
+             CEType:
+              type: string
+              description: Site to Cloud VPN access point type
+              enum: 
+                 - site
+                 - cloud
+             primaryCEIP:
+              description: primary Access point CE address
+              type: string
+              format: ipv4
+              example: "84.125.93.10"
+             secondaryCEIP:
+              description: secondary Access point CE address
+              type: string
+              format: ipv4
+              example: "84.125.94.10"
+             PEType:
+              type: string
+              description: Site to Cloud VPN endpoint type ( Cloud PE/gateway type)
+              enum: 
+                 - site
+                 - cloud
+             primaryPEIP:
+              description: primary Endpoint Cloud PE address
+              type: string
+              format: ipv4
+              example: "84.125.93.10"
+             secondaryPEIP:
+              description:  secondary Endpoint Cloud PE address
+              type: string
+              format: ipv4
+              example: "84.125.94.10"
+             guaranteeBandwidth:
+              type: integer
+              description: Guarantee Bandwidth (Mps)
+              minimum: 1
+             duration:
+              type: integer
+              description: "Guarantee duration, unit:Hour"
+             CELocation:
+              type: string
+       responses:
+        '200':
+         description: Successful response
+         headers:
+          X-Correlator:
+           description: When the API Consumer includes the "X-Correlator" header in the request, the API provider must include it in the response with the same value that was used in the request
+           schema:
+            type: integer
+         content:
+          application/json:
+           schema:
+            type: object
+            properties:
+             solution1:
+              type: array
+              items:
+               $ref: '#/components/schemas/S2CVPNAssessment'
+              example:
+               - SLA: A
+                 rent: 100
+               - SLA: AA
+                 rent: 500
+               - SLA: AAA
+                 rent: 800
+             solution2:
+              type: object
+              properties:
+               waitdays:
+                type: integer
+                description: the waiting-days until the vpn can be offered
+                minimum: 1
+               SLA:
+                type: string
+                enum: 
+                   - A
+                   - AA
+                   - AAA
+               rent:
+                type: integer
+                description: "VPN monthly rental "
+        '400':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/InvalidArgument'  
+        '401':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/AuthenticationRequired'  
+        '403':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/PermissionDenied' 
+        '404':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/NotFound' 
+        '500':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Internal' 
+        '503':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Unavailable'
+    /S2C_VPN :
+     post:
+       parameters:
+        - $ref: '#/components/parameters/X-Correlator'
+       requestBody:
+        content:
+          application/json:
+           schema:
+            $ref: '#/components/schemas/S2CVPNOrder'
+       responses:
+        '200':
+         description: Successful response
+         headers:
+          X-Correlator:
+           description: When the API Consumer includes the "X-Correlator" header in the request, the API provider must include it in the response with the same value that was used in the request
+           schema:
+            type: integer
+         content:
+          application/json:
+           schema:
+            type: object
+            properties:
+             serviceId:
+              type: string
+              description: service Id
+             resourceGroupId:
+              type: string
+              description: resource group Id
+             cloudGatewayIP:
+              type: string
+              description: cloud gateway IPAddress
+        '400':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/InvalidArgument'  
+        '401':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/AuthenticationRequired'  
+        '403':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/PermissionDenied' 
+        '404':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/NotFound' 
+        '500':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Internal' 
+        '503':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Unavailable' 
+     put: 
+      parameters:
+        - $ref: '#/components/parameters/X-Correlator'
+      requestBody:
+        content:
+          application/json:
+           schema:
+            type: object
+            properties:
+             serviceID:
+              type: string
+             guaranteeBandwidth:
+              type: integer
+              description: Guarantee Bandwidth (Mps)
+              minimum: 1
+             SLA:
+              type: string
+              enum: 
+                 - A
+                 - AA
+                 - AAA
+      responses:
+        '200':
+         description: Successful response
+         headers:
+          X-Correlator:
+           description: When the API Consumer includes the "X-Correlator" header in the request, the API provider must include it in the response with the same value that was used in the request
+           schema:
+            type: integer
+         content:
+          application/json:
+           schema:
+            title: Successful
+            type: object
+            properties:
+             serviceId:
+              type: string
+             GuaranteeBandwidth:
+              type: string
+             slaLevel:
+              type: string
+        '400':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/InvalidArgument'  
+        '401':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/AuthenticationRequired'  
+        '403':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/PermissionDenied' 
+        '404':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/NotFound' 
+        '500':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Internal' 
+        '503':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Unavailable' 
+     get:
+      parameters:
+        - $ref: '#/components/parameters/X-Correlator'
+        - $ref: '#/components/parameters/servceId'
+      responses:
+        '200':
+         description: Successful response
+         headers:
+          X-Correlator:
+           description: When the API Consumer includes the "X-Correlator" header in the request, the API provider must include it in the response with the same value that was used in the request
+           schema:
+            type: integer
+         content:
+          application/json:
+           schema:
+            type: object
+            properties:
+             serviceId:
+              type: string
+              description: service Id
+             isProtected:
+               type: bool
+               description: Is Site to Cloud VPN protected
+             primaryCEIP:
+               description: primary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryCEIP:
+               description: secondary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
+             primaryPEIP:
+               description: primary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryPEIP:
+               description: secondary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
+             purchasedSLA:
+              type: string
+              enum: 
+                 - A
+                 - AA
+                 - AAA
+             purchasedGuaranteeBandwidth:
+              type: integer
+              description: Guarantee Bandwidth (Mps)
+              minimum: 1
+             purchasedDuration:
+              type: integer
+              description: hours
+              example: 72
+             actualSLA:
+              type: string
+              enum: 
+                 - A
+                 - AA
+                 - AAA
+             actualGuaranteeBandwidth:
+              type: integer
+              description: Guarantee Bandwidth (Mps)
+              minimum: 1
+             actualLatency:
+              type: integer
+              description: ms
+              example: 10
+             actualPacketLostRate:
+              type: number
+              description: '%'
+              example: 0.1%
+             servicedDuration:
+              type: integer
+              description: hours 
+              example: 24
+        '400':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/InvalidArgument'  
+        '401':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/AuthenticationRequired'  
+        '403':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/PermissionDenied' 
+        '404':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/NotFound' 
+        '500':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Internal' 
+        '503':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Unavailable'      
+     delete:
+      parameters:
+        - $ref: '#/components/parameters/X-Correlator'
+        - $ref: '#/components/parameters/servceId'
+      responses:
+        '200':
+         description: Successful response
+         headers:
+          X-Correlator:
+           description: When the API Consumer includes the "X-Correlator" header in the request, the API provider must include it in the response with the same value that was used in the request
+           schema:
+            type: integer
+         content:
+          application/json:
+           schema:
+            type: object
+            properties:
+             serviceId:
+              type: string
+              description: service Id
+             isProtected:
+               type: bool
+               description: Is Site to Cloud VPN protected
+             primaryCEIP:
+               description: primary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryCEIP:
+               description: secondary Access point CE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
+             primaryPEIP:
+               description: primary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.93.10"
+             secondaryPEIP:
+               description: secondary Endpoint Cloud PE address
+               type: string
+               format: ipv4
+               example: "84.125.94.10"
+             actualSLA:
+              type: string
+              enum: 
+                 - A
+                 - AA
+                 - AAA
+             actualGuaranteeBandwidth:
+              type: integer
+              description: Guarantee Bandwidth (Mps)
+              minimum: 1
+             actualLatency:
+              type: integer
+              description: ms
+              example: 10
+             actualPacketLostRate:
+              type: number
+              description: '%'
+              example: 0.1%
+             servicedDuration:
+              type: integer
+              description: hours 
+              example: 24
+        '400':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/InvalidArgument'  
+        '401':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/AuthenticationRequired'  
+        '403':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/PermissionDenied' 
+        '404':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/NotFound' 
+        '500':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Internal' 
+        '503':
+         description: error/exception codes for the Site to Cloud VPN AP
+         content:
+            application/json:
+              schema:
+               $ref: '#/components/responses/Unavailable'
+components:   
+  parameters:
+    X-Correlator:
+      name: X-Correlator
+      required: true 
+      in: header
+      description: "Service correlator to make E2E observability,Recommendation is to use UUID for values,for example:b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+      schema:
+        type: string   
+    servceId:
+      name: servceId
+      required: true 
+      in: query
+      description: "service session ID"
+      schema:
+        type: string    
+    servceName:
+      name: servceName
+      required: true 
+      in: query
+      description: "servce name"
+      schema:
+        type: string
+    isProtected:
+      name: isProtected
+      required: true
+      in: query
+      description: Is Site to Cloud VPN protected
+      schema:
+        type: bool
+    CEType:
+      name: CEType
+      required: true 
+      in: query
+      description: Site to Cloud VPN access point type
+      schema:
+        type: string
+        enum: 
+         - site
+         - cloud
+    primaryCEIP:
+      name: primaryCEIP
+      required: true 
+      in: query
+      description: primary Access point CE address
+      schema:
+        $ref: '#/components/schemas/SingleIpv4Addr'
+    secondaryCEIP:
+      name: secondaryCEIP
+      required: false
+      in: query
+      description: secondary Access point CE address. When isProtected is true, secondaryCEIP is required
+      schema:
+        $ref: '#/components/schemas/SingleIpv4Addr'
+    PEType:
+      name: PEType
+      required: true 
+      in: query
+      description: Site to Cloud VPN endpoint type ( Cloud PE/gateway type)
+      schema:
+        type: string
+        enum: 
+         - site
+         - cloud
+    primaryPEIP:
+      name: primaryPEIP
+      required: true 
+      in: query
+      description: primary Endpoint Cloud PE address
+      schema:
+        $ref: '#/components/schemas/SingleIpv4Addr'
+    secondaryPEIP:
+      name: secondaryPEIP
+      required: false
+      in: query
+      description: secondary Endpoint Cloud PE address. When isProtected is true, secondaryPEIP is required
+      schema:
+        $ref: '#/components/schemas/SingleIpv4Addr'
+    sla:
+      name: slaLevel
+      required: true 
+      in: query
+      description: "available SLA (Service-Level Agreement)"
+      schema:
+        type: string
+        enum: 
+         - A
+         - AA
+         - AAA
+    guaranteeBandwidth:
+      name: GuaranteeBandwidth
+      required: true 
+      in: query
+      description: Guarantee Bandwidth (Mps)
+      schema:
+        type: integer
+        minimum: 1
+    duration:
+      name: duration
+      required: true 
+      in: query
+      description: "Guarantee duration, unit:Hour"
+      schema:
+        type: integer
+    CELocation:
+      name: CELocation
+      required: true 
+      in: query
+      description: Access point CE physical location
+      schema:
+        type: string
+    routeProtocal:
+      name: routeProtocal
+      required: true 
+      in: query
+      description: routeProtocal
+      schema:
+        type: string
+        enum: 
+         - static
+         - BGP
+  
+  schemas:
+   TimePeriod:
+    properties:
+     startDate:
+      type: string
+      format: date-time
+      description: An instant of time, starting of the TimePeriod.
+     endDate:
+      type: string
+      format: date-time
+      description: An instant of time, ending of the TimePeriod. If not included, then the period has no ending date.
+    required: 
+       - startDate
+   ErrorInfo:
+    type: object
+    properties:
+     message:
+      type: string
+      description: A human readable description of what the event represent
+     status:
+      type: integer
+      description: HTTP response status code
+     code:
+      type: string
+      description: Friendly Code to describe the error
+    required:
+    - message
+    - status
+    - code  
+   SingleIpv4Addr:
+    description: A single IPv4 address with no subnet mask
+    type: string
+    format: ipv4
+    example: "84.125.93.10"
+   Port:
+    description: TCP or UDP port number
+    type: integer
+    minimum: 0
+    maximum: 65535
+   DeviceIpv6Address:
+    description: |
+     The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).
+    type: string
+    format: ipv6
+    example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
+   DeviceIpv4Addr:
+    type: object
+    description: |
+     The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).
+
+     If the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.
+
+     If NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)
+
+     In all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.
+    properties:
+     publicAddress:
+      $ref: "#/components/schemas/SingleIpv4Addr"
+     privateAddress:
+      $ref: "#/components/schemas/SingleIpv4Addr"
+     publicPort:
+      $ref: "#/components/schemas/Port"
+    anyOf:
+     - required: [publicAddress, privateAddress]
+     - required: [publicAddress, publicPort]
+    example:
+     publicAddress: "84.125.93.10"
+     publicPort: 59765
+   PhoneNumber:
+    description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
+    type: string
+    pattern: '^\+[1-9][0-9]{4,14}$'
+    example: "+123456789"
+   NetworkAccessIdentifier:
+    description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
+    type: string
+    example: "123456789@domain.com"
+   Device:
+    description: |
+     End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.
+        The developer can choose to provide the below specified device identifiers:
+        * `ipv4Address`
+        * `ipv6Address`
+        * `phoneNumber`
+        * `networkAccessIdentifier`
+        NOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.
+    type: object
+    properties:
+     phoneNumber:
+      $ref: "#/components/schemas/PhoneNumber"
+     networkAccessIdentifier:
+      $ref: "#/components/schemas/NetworkAccessIdentifier"
+     ipv4Address:
+      $ref: "#/components/schemas/DeviceIpv4Addr"
+     ipv6Address:
+      $ref: "#/components/schemas/DeviceIpv6Address"
+    minProperties: 1
+   
+   S2CVPNAssessment:
+    type: object
+    properties:
+     SLA:
+      type: string
+      enum: 
+         - A
+         - AA
+         - AAA
+     rent:
+      type: integer
+      description: "VPN monthly rental "
+   S2CVPNOrder:
+    type: object
+    properties:
+     servceName:
+      type: string
+      description: "servce name"
+     isProtected:
+       type: bool
+       description: Is Site to Cloud VPN protected
+     CEType:
+      type: string
+      description: Site to Cloud VPN access point type
+      enum: 
+         - site
+         - cloud
+     primaryCEIP:
+      description: primary Access point CE address
+      type: string
+      format: ipv4
+      example: "84.125.93.10"
+     secondaryCEIP:
+       description: secondary Access point CE address
+       type: string
+       format: ipv4
+       example: "84.125.94.10"
+     PEType:
+      type: string
+      description: Site to Cloud VPN endpoint type ( Cloud PE/gateway type)
+      enum: 
+         - site
+         - cloud
+     primaryPEIP:
+       description: primary Endpoint Cloud PE address
+       type: string
+       format: ipv4
+       example: "84.125.93.10"
+     secondaryPEIP:
+       description: secondary Endpoint Cloud PE address
+       type: string
+       format: ipv4
+       example: "84.125.94.10"
+     SLA:
+      type: string
+      enum: 
+         - A
+         - AA
+         - AAA
+     guaranteeBandwidth:
+      type: integer
+      description: Guarantee Bandwidth (Mps)
+      minimum: 1
+     duration:
+      type: integer
+      description: "Guarantee duration, unit:Hour"
+     CELocation:
+      type: string
+     routeProtocal:
+      type: string
+      enum: 
+         - static
+         - BGP
+
+  responses:
+    InvalidArgument:
+     description: Invalid Argument
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 400
+        code: INVALID_INPUT
+        message: |
+         - Expected property is missing: Site or cloud 's ipv4addr/ipv6addr
+    Conflict:
+     description: conflict
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 409
+        code: CONFLICT
+        message: Schema validation failed at  ... 
+    AuthenticationRequired:
+     description: Authentication Required
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 401
+        code: AUTHENTICATION_REQUIRED
+        message: New authentication is required 
+    PermissionDenied:
+     description: Permission denied
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 403
+        code: PERMISSION_DENIED
+        message: Client does not have sufficient permissions to perform
+    NotFound:
+     description: Not Found
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 404
+        code: NOT_FOUND
+        message: The specified resource is not found. 
+    MethodNotAllowed:
+     description: Method not allowed
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 405
+        code: METHOD_NOT_ALLOWED
+        message: The requested method is not allowed/supported on the target
+    NotAcceptable:
+     description: Not Acceptable
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 406
+        code: NOT_ACCEPTABLE
+        message: The server can't produce a response matching the content requested by the client through Accept-* headers
+    UnsupportedMediaType:
+     description: Unsupported Media Type
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 415
+        code: UNSUPPORTED_MEDIA_TYPE
+        message: The server refuses to accept the request because the payload format is in an unsupported format.
+    Internal:
+     description: Internal Error
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 500
+        code: INTERNAL
+        message: Unknown server error.Typically a server bug.
+    BadGateway:
+     description: Bad Gateway
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 502
+        code: BAD_GATEWAY
+        message: Couldn't reach an upstream internal service.
+    Unavailable:
+     description: Service Unavailable
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 503
+        code: UNAVAILABLE
+        message: Service unavailable
+    Timeout:
+     description: Timeout
+     content:
+      application/json:
+       schema:
+        $ref: "#/components/schemas/ErrorInfo"
+       example:
+        status: 504
+        code: TIMEOUT
+        message: Request timeout exceeded
+    
+    
+    
+    
+    
+    
+    
+     
