@@ -8,7 +8,7 @@
 <a href="https://github.com/camaraproject/Governance/blob/main/ProjectStructureAndRoles.md" title="Sandbox API Repository"><img src="https://img.shields.io/badge/Sandbox%20API%20Repository-yellow?style=plastic"></a>
 
 # SiteToCloudVPN
-Repository to describe, develop, document and test the Site To Cloud VPN API family
+
 Sandbox API Repository to describe, develop, document, and test the SiteToCloudVPN Service API(s). The repository does not yet belong to a CAMARA Sub Project.
 
 * API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/x/KC3e)
